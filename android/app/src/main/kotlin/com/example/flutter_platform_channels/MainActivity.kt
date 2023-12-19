@@ -20,9 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-
-
-class MainActivity : FlutterActivity(){
+class MainActivity : FlutterActivity() {
 
     companion object {
         private const val CAMERA_PERMISSION_CODE = 101;
@@ -38,29 +36,27 @@ class MainActivity : FlutterActivity(){
     private lateinit var resultss: MethodChannel.Result
 
 
-
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger, methodName
         ).setMethodCallHandler { call, result ->
-            resultss  = result
+            resultss = result
             when (call.method) {
                 showToasts -> {
-                    if (call.argument<String>("text") != null) {
-                        Toast.makeText(context, call.argument<String>("text"), Toast.LENGTH_SHORT)
-                            .show()
-                    } else {
-                        Toast.makeText(context, BuildConfig.APPLICATION_ID, Toast.LENGTH_SHORT)
-                            .show()
-                    }
+                    val arguments = call.argument<String>("content")
+                    Toast.makeText(context, arguments.toString(), Toast.LENGTH_SHORT)
+                        .show()
                 }
+
                 openCameras -> {
                     openCamera()
                 }
+
                 openEmails -> {
                     openEmail()
                 }
+
                 checkPermissions -> {
                     checkPermission(
                         Manifest.permission.CAMERA,
@@ -167,11 +163,10 @@ class MainActivity : FlutterActivity(){
         super.onActivityResult(requestCode, resultCode, data)
         val selectedFiles = mutableListOf<String>()
 
-        Log.e("AAAAAAAA",data?.data.toString())
+        Log.e("AAAAAAAA", data?.data.toString())
         val uriPathHelper = URIPathHelper()
         if (data?.data != null) {
             val filePath = uriPathHelper.getPath(this, data.data!!)
-
             selectedFiles.add(filePath!!)
             val channel =
                 flutterEngine?.dartExecutor?.binaryMessenger?.let { MethodChannel(it, methodName) }

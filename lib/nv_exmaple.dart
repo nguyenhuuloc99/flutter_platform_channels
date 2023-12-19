@@ -11,11 +11,10 @@ class NativeViewExample extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Native View Example"),
       ),
-      body: const Center(
-        child: SizedBox(
-          height: 100,
-          child: NativeView(),
-        ),
+      body: SizedBox(
+        height: 800,
+        width: MediaQuery.of(context).size.width,
+        child: const NativeView(),
       ),
     );
   }
