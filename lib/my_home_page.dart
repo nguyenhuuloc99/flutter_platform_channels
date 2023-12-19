@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_platform_channels/internet_example.dart';
 import 'event_channel_example.dart';
 import 'nv_exmaple.dart';
 import 'utils.dart';
 
 class MyHomePage extends StatefulWidget {
-
-   const MyHomePage({super.key});
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -92,8 +92,22 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(
               height: 30,
             ),
-            if(selectedFiles.isNotEmpty)
-            Image.file(File(selectedFiles[0]))
+           /* ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const InternetExample();
+                    },
+                  ),
+                );
+              },
+              child: const Text('Internet'),
+            ),*/
+            const SizedBox(
+              height: 30,
+            ),
+            if (selectedFiles.isNotEmpty) Image.file(File(selectedFiles[0]))
           ],
         ),
       ),
@@ -106,9 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void openCamera() async {
-        await const MethodChannel(methodName).invokeMethod<String>(openCameras);
-        await setupMethodCallHandler();
-
+    await const MethodChannel(methodName).invokeMethod<String>(openCameras);
+    await setupMethodCallHandler();
   }
 
   void openEmailApp() async {

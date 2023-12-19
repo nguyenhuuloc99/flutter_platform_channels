@@ -15,6 +15,7 @@ import com.example.flatform_view_flutter.DisplayViewFactory
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -29,8 +30,10 @@ class MainActivity : FlutterActivity() {
         private const val openCameras = "openCamera"
         private const val openEmails = "openEmail"
         private const val checkPermissions = "checkPermission"
+        private const val METHOD_CHANGE_INTERNET_CONNECTIVITY = "CHANGE_INTERNET"
         private const val methodName = "demo"
         private const val eventChannel = "timeHandlerEvent"
+        private const val eventChannel2 = "timeHandlerEvent2"
     }
 
     private lateinit var resultss: MethodChannel.Result
@@ -38,6 +41,7 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        setUpEventChannel(flutterEngine)
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger, methodName
         ).setMethodCallHandler { call, result ->
@@ -63,6 +67,10 @@ class MainActivity : FlutterActivity() {
                         CAMERA_PERMISSION_CODE
                     )
                 }
+                METHOD_CHANGE_INTERNET_CONNECTIVITY -> {
+                    changeInternetConnectivity(call, result)
+                }
+
                 else -> {
                     result.notImplemented()
                 }
@@ -78,6 +86,9 @@ class MainActivity : FlutterActivity() {
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, eventChannel).setStreamHandler(
             TimeHandler
         )
+
+        ///
+
     }
 
 
@@ -163,7 +174,6 @@ class MainActivity : FlutterActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         val selectedFiles = mutableListOf<String>()
 
-        Log.e("AAAAAAAA", data?.data.toString())
         val uriPathHelper = URIPathHelper()
         if (data?.data != null) {
             val filePath = uriPathHelper.getPath(this, data.data!!)
@@ -173,6 +183,28 @@ class MainActivity : FlutterActivity() {
             channel?.invokeMethod("onFilesPicked", selectedFiles)
         }
 
+    }
+
+    private fun setUpEventChannel(flutterEngine: FlutterEngine) {
+        val eventChannel = EventChannel(flutterEngine.dartExecutor.binaryMessenger, eventChannel2)
+        this.streamHandler = this.streamHandler
+            ?: FlutterStreamHandler()
+        eventChannel.setStreamHandler(this.streamHandler)
+    }
+    /*
+    *
+    * */
+    private var streamHandler: FlutterStreamHandler? = null
+
+    private fun changeInternetConnectivity(methodCall: MethodCall,
+                                           result: MethodChannel.Result) {
+        val connectivity = methodCall.argument<Boolean>("connectivity")
+
+        if (this.streamHandler == null || connectivity == null) return
+
+        val intent = Intent()
+        intent.putExtra("connectivity", connectivity)
+        this.streamHandler?.handleIntent(this, intent)
     }
 
 }
