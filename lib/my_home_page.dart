@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 openCamera();
               },
-              child: const Text('OPEN CAMERA'),
+              child: const Text('OPEN ALBUM'),
             ),
             const SizedBox(
               height: 30,
@@ -116,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void requestCameraPermission() async {
-    var result = await const MethodChannel(methodName)
+    await const MethodChannel(methodName)
         .invokeMethod<String>(checkPermissions);
   }
 
